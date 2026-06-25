@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PG2000 — Prompt Generator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>PG2000</h1>
+      <p class="subtitle">Turn an image into a detailed prompt for AI image generators.</p>
+    </header>
+
+    <section class="mode-select">
+      <label for="mode">Prompt type</label>
+      <select id="mode" disabled>
+        <option value="image_generation">Image generation prompt</option>
+        <option value="text_generation">Text generation prompt (coming soon)</option>
+        <option value="video_generation">Video generation prompt (coming soon)</option>
+      </select>
+    </section>
+
+    <section class="upload-area" id="dropZone">
+      <input type="file" id="fileInput" accept="image/*" hidden />
+      <div id="dropPrompt">
+        <p>Drag &amp; drop an image here, or</p>
+        <button id="browseBtn" type="button">Choose Image</button>
+      </div>
+      <img id="preview" alt="Selected preview" hidden />
+    </section>
+
+    <button id="generateBtn" type="button" disabled>Generate Prompt</button>
+
+    <section class="result" id="resultSection" hidden>
+      <div class="result-header">
+        <h2>Generated Prompt</h2>
+        <button id="copyBtn" type="button">Copy</button>
+      </div>
+      <textarea id="resultText" readonly></textarea>
+    </section>
+
+    <p class="status" id="status" role="status"></p>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
