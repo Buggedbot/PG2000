@@ -1,10 +1,11 @@
 from pathlib import Path
 
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, Form, HTTPException, UploadFile
 from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 from .providers.factory import get_provider
+from .providers.prompts import DEFAULT_MODE, MODE_PROMPTS
 
 app = FastAPI(title="PG2000 Prompt Generator")
 
@@ -12,7 +13,13 @@ FRONTEND_DIR = Path(__file__).resolve().parent.parent.parent / "frontend"
 
 
 @app.post("/api/prompt")
-async def generate_prompt(image: UploadFile):
+async def generate_prompt(image: UploadFile, mode: str = Form(DEFAULT_MODE)):
+    if mode not in MODE_PROMPTS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported mode: {mode!r} (expected one of {sorted(MODE_PROMPTS)})",
+        )
+
     if not image.content_type or not image.content_type.startswith("image/"):
         raise HTTPException(status_code=400, detail="Uploaded file must be an image")
 
@@ -24,11 +31,11 @@ async def generate_prompt(image: UploadFile):
 
     try:
         provider = get_provider()
-        prompt = provider.generate_prompt(image_bytes, image.content_type)
+        prompt = provider.generate_prompt(image_bytes, image.content_type, mode)
     except RuntimeError as exc:
         raise HTTPException(status_code=500, detail=str(exc)) from exc
 
-    return {"prompt": prompt}
+    return {"prompt": prompt, "mode": mode}
 
 
 @app.get("/api/health")

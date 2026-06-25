@@ -8,6 +8,7 @@ const resultSection = document.getElementById("resultSection");
 const resultText = document.getElementById("resultText");
 const copyBtn = document.getElementById("copyBtn");
 const statusEl = document.getElementById("status");
+const modeSelect = document.getElementById("mode");
 
 let selectedFile = null;
 
@@ -64,6 +65,7 @@ generateBtn.addEventListener("click", async () => {
 
   const formData = new FormData();
   formData.append("image", selectedFile);
+  formData.append("mode", modeSelect.value);
 
   try {
     const response = await fetch("/api/prompt", {
