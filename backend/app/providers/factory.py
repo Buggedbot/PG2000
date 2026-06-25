@@ -26,4 +26,13 @@ def get_provider() -> PromptProvider:
 
         return OpenAIProvider(settings.openai_api_key, settings.openai_model)
 
-    raise RuntimeError(f"Unknown LLM_PROVIDER: {provider!r} (expected mock, anthropic, or openai)")
+    if provider == "gemini":
+        if not settings.gemini_api_key:
+            raise RuntimeError("LLM_PROVIDER=gemini requires GEMINI_API_KEY to be set")
+        from .gemini_provider import GeminiProvider
+
+        return GeminiProvider(settings.gemini_api_key, settings.gemini_model)
+
+    raise RuntimeError(
+        f"Unknown LLM_PROVIDER: {provider!r} (expected mock, anthropic, openai, or gemini)"
+    )

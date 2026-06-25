@@ -1,8 +1,11 @@
 # PG2000
 
-Prompting specialist — upload an image and get back a detailed prompt you can feed
-into AI image generators (Midjourney, Stable Diffusion, DALL-E, etc.). Image-generation
-prompts are the first supported mode; more prompt types (text, video, ...) are planned.
+Prompting specialist:
+- Upload (or paste) an image to reverse-engineer it into a detailed prompt for AI
+  image generators (Midjourney, Stable Diffusion, DALL-E, etc.) or for text-writing
+  assistants based on what's in the image.
+- Give a short idea to expand into a detailed video-generation prompt/story.
+- Paste any existing prompt and have it improved for the selected target.
 
 ## Project structure
 
@@ -31,6 +34,10 @@ ANTHROPIC_API_KEY=sk-ant-...
 # or OpenAI (GPT-4o vision)
 LLM_PROVIDER=openai
 OPENAI_API_KEY=sk-...
+
+# or Gemini (free tier — get a key at https://aistudio.google.com/apikey)
+LLM_PROVIDER=gemini
+GEMINI_API_KEY=...
 ```
 
 ## Run
@@ -40,9 +47,16 @@ cd backend
 uvicorn app.main:app --reload
 ```
 
-Open http://127.0.0.1:8000 — upload an image and click "Generate Prompt".
+Open http://127.0.0.1:8000 — upload an image (or, for video mode, type an idea)
+and click "Generate Prompt".
 
 ## API
 
-`POST /api/prompt` — multipart form with an `image` file field, returns `{"prompt": "..."}`.
+`POST /api/prompt` — multipart form with `mode` (`image_generation` | `text_generation` |
+`video_generation`) and either an `image` file field (image-based modes) or an `idea` text
+field (video mode). Returns `{"prompt": "...", "mode": "..."}`.
+
+`POST /api/improve` — multipart form with `prompt` and `mode`, returns the improved prompt
+for that target.
+
 `GET /api/health` — returns the active provider for debugging.
