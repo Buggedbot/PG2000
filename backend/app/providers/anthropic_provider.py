@@ -1,7 +1,7 @@
 import base64
 
 from .base import PromptProvider
-from .prompts import DEFAULT_MODE, MODE_PROMPTS, improve_prompt_system_prompt
+from .prompts import DEFAULT_FORMAT, DEFAULT_MODE, improve_prompt_system_prompt, system_prompt_for
 
 
 class AnthropicProvider(PromptProvider):
@@ -31,16 +31,18 @@ class AnthropicProvider(PromptProvider):
         )
         return "".join(block.text for block in response.content if block.type == "text").strip()
 
-    def generate_from_image(self, image_bytes: bytes, mime_type: str, mode: str = DEFAULT_MODE) -> str:
+    def generate_from_image(
+        self, image_bytes: bytes, mime_type: str, mode: str = DEFAULT_MODE, output_format: str = DEFAULT_FORMAT
+    ) -> str:
         encoded = base64.standard_b64encode(image_bytes).decode("utf-8")
         return self._complete(
-            MODE_PROMPTS[mode],
+            system_prompt_for(mode, output_format),
             "Write the detailed prompt for this image.",
             image=(mime_type, encoded),
         )
 
-    def generate_from_idea(self, idea: str, mode: str = DEFAULT_MODE) -> str:
-        return self._complete(MODE_PROMPTS[mode], f"My idea: {idea}")
+    def generate_from_idea(self, idea: str, mode: str = DEFAULT_MODE, output_format: str = DEFAULT_FORMAT) -> str:
+        return self._complete(system_prompt_for(mode, output_format), f"My idea: {idea}")
 
-    def improve_prompt(self, prompt: str, mode: str = DEFAULT_MODE) -> str:
-        return self._complete(improve_prompt_system_prompt(mode), prompt)
+    def improve_prompt(self, prompt: str, mode: str = DEFAULT_MODE, output_format: str = DEFAULT_FORMAT) -> str:
+        return self._complete(improve_prompt_system_prompt(mode, output_format), prompt)

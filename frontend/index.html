@@ -22,6 +22,19 @@
       </select>
     </section>
 
+    <section class="format-select">
+      <label for="format">Output format</label>
+      <select id="format">
+        <option value="text">Plain text</option>
+        <option value="json">JSON</option>
+      </select>
+    </section>
+
+    <details class="tips" id="tipsPanel">
+      <summary>Tips for better prompts</summary>
+      <ul id="tipsList"></ul>
+    </details>
+
     <section class="upload-area" id="dropZone">
       <input type="file" id="fileInput" accept="image/*" hidden />
       <div id="dropPrompt">

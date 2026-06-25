@@ -6,6 +6,8 @@ Prompting specialist:
   assistants based on what's in the image.
 - Give a short idea to expand into a detailed video-generation prompt/story.
 - Paste any existing prompt and have it improved for the selected target.
+- Choose plain text or JSON output, and check the mode-aware tips panel for
+  prompting techniques.
 
 ## Project structure
 
@@ -53,10 +55,11 @@ and click "Generate Prompt".
 ## API
 
 `POST /api/prompt` — multipart form with `mode` (`image_generation` | `text_generation` |
-`video_generation`) and either an `image` file field (image-based modes) or an `idea` text
-field (video mode). Returns `{"prompt": "...", "mode": "..."}`.
+`video_generation`), `format` (`text` | `json`, defaults to `text`), and either an `image`
+file field (image-based modes) or an `idea` text field (video mode). Returns
+`{"prompt": "...", "mode": "...", "format": "..."}`.
 
-`POST /api/improve` — multipart form with `prompt` and `mode`, returns the improved prompt
-for that target.
+`POST /api/improve` — multipart form with `prompt`, `mode`, and `format`, returns the
+improved prompt for that target.
 
 `GET /api/health` — returns the active provider for debugging.

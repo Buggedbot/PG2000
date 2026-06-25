@@ -12,8 +12,42 @@ const copyBtn = document.getElementById("copyBtn");
 const improveBtn = document.getElementById("improveBtn");
 const statusEl = document.getElementById("status");
 const modeSelect = document.getElementById("mode");
+const formatSelect = document.getElementById("format");
+const tipsList = document.getElementById("tipsList");
 
 const IDEA_MODES = new Set(["video_generation"]);
+
+const TIPS = {
+  image_generation: [
+    "Lead with the subject, medium, and mood before piling on details — models weight earlier words more heavily.",
+    "Add 4-6 high-signal details: lighting, framing/angle, color palette, and materials/textures.",
+    "Use cinematic or photographic terms (e.g. \"35mm\", \"golden hour\", \"rule of thirds\") — models respond well to them.",
+    "Describe art influences by genre or era (e.g. \"Art Nouveau poster style\") rather than naming a specific living artist.",
+    "Add a short negative prompt for things to avoid (e.g. \"no extra fingers, no blurry background\") if your tool supports it.",
+    "Try the JSON format below — separating subject/style/lighting/camera into fields stops attributes from \"bleeding\" into each other on complex scenes.",
+  ],
+  text_generation: [
+    "Give the model a role or persona (\"You are an experienced travel writer...\") to anchor tone and expertise.",
+    "State the output format and length explicitly (e.g. \"a 150-word product blurb\", \"3 bullet points\").",
+    "Provide a quick example of the style you want (few-shot) if the task is nuanced.",
+    "For multi-step or reasoning-heavy tasks, ask the model to think step by step before producing the final answer.",
+    "Iterate by changing one thing at a time (tone, length, structure) so you know what each change affects.",
+  ],
+  video_generation: [
+    "Use the SCAAL framework: Subject, Camera, Action, Atmosphere, Length — cover each briefly.",
+    "Describe one clear camera movement per clip (e.g. \"slow dolly in\") rather than combining several.",
+    "Describe the physics or forces driving motion (\"wind pushes the leaves\") instead of just the end appearance.",
+    "Explicitly say if the background should stay static, since models often add unwanted motion everywhere.",
+    "Add small natural imperfections (\"slight sway\", \"hair blown by wind\") for more believable motion.",
+    "Keep clips to 5-8 seconds — longer, more complex moves tend to degrade in current video models.",
+    "Many video models (Veo-style) respond especially well to JSON-schema-style structured prompts — try the JSON format below.",
+  ],
+};
+
+function renderTips() {
+  const tips = TIPS[modeSelect.value] || [];
+  tipsList.innerHTML = tips.map((tip) => `<li>${tip}</li>`).join("");
+}
 
 let selectedFile = null;
 
@@ -34,6 +68,7 @@ function applyModeVisibility() {
   dropZone.hidden = isIdeaMode();
   ideaArea.hidden = !isIdeaMode();
   updateGenerateButtonState();
+  renderTips();
 }
 
 function selectFile(file) {
@@ -97,6 +132,7 @@ generateBtn.addEventListener("click", async () => {
 
   const formData = new FormData();
   formData.append("mode", mode);
+  formData.append("format", formatSelect.value);
   if (isIdeaMode()) {
     formData.append("idea", ideaInput.value.trim());
   } else {
@@ -135,6 +171,7 @@ improveBtn.addEventListener("click", async () => {
     const formData = new FormData();
     formData.append("prompt", resultText.value.trim());
     formData.append("mode", modeSelect.value);
+    formData.append("format", formatSelect.value);
 
     const response = await fetch("/api/improve", {
       method: "POST",

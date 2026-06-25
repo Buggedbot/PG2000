@@ -5,7 +5,7 @@ from fastapi.staticfiles import StaticFiles
 
 from .config import settings
 from .providers.factory import get_provider
-from .providers.prompts import DEFAULT_MODE, IMAGE_INPUT_MODES, MODE_PROMPTS
+from .providers.prompts import DEFAULT_FORMAT, DEFAULT_MODE, IMAGE_INPUT_MODES, MODE_PROMPTS, OUTPUT_FORMATS
 
 app = FastAPI(title="PG2000 Prompt Generator")
 
@@ -17,6 +17,14 @@ def _validate_mode(mode: str) -> None:
         raise HTTPException(
             status_code=400,
             detail=f"Unsupported mode: {mode!r} (expected one of {sorted(MODE_PROMPTS)})",
+        )
+
+
+def _validate_format(output_format: str) -> None:
+    if output_format not in OUTPUT_FORMATS:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported format: {output_format!r} (expected one of {sorted(OUTPUT_FORMATS)})",
         )
 
 
@@ -37,10 +45,12 @@ def _run_provider_call(fn, *args):
 @app.post("/api/prompt")
 async def generate_prompt(
     mode: str = Form(DEFAULT_MODE),
+    format: str = Form(DEFAULT_FORMAT),
     image: UploadFile | None = None,
     idea: str | None = Form(None),
 ):
     _validate_mode(mode)
+    _validate_format(format)
     provider = _get_provider()
 
     if mode in IMAGE_INPUT_MODES:
@@ -53,27 +63,32 @@ async def generate_prompt(
         if len(image_bytes) > settings.max_image_bytes:
             raise HTTPException(status_code=413, detail="Image exceeds maximum allowed size")
 
-        prompt = _run_provider_call(provider.generate_from_image, image_bytes, image.content_type, mode)
+        prompt = _run_provider_call(
+            provider.generate_from_image, image_bytes, image.content_type, mode, format
+        )
     else:
         if not idea or not idea.strip():
             raise HTTPException(status_code=400, detail="This mode requires an 'idea' text field")
 
-        prompt = _run_provider_call(provider.generate_from_idea, idea.strip(), mode)
+        prompt = _run_provider_call(provider.generate_from_idea, idea.strip(), mode, format)
 
-    return {"prompt": prompt, "mode": mode}
+    return {"prompt": prompt, "mode": mode, "format": format}
 
 
 @app.post("/api/improve")
-async def improve_prompt(prompt: str = Form(...), mode: str = Form(DEFAULT_MODE)):
+async def improve_prompt(
+    prompt: str = Form(...), mode: str = Form(DEFAULT_MODE), format: str = Form(DEFAULT_FORMAT)
+):
     _validate_mode(mode)
+    _validate_format(format)
 
     if not prompt.strip():
         raise HTTPException(status_code=400, detail="Prompt to improve must not be empty")
 
     provider = _get_provider()
-    improved = _run_provider_call(provider.improve_prompt, prompt.strip(), mode)
+    improved = _run_provider_call(provider.improve_prompt, prompt.strip(), mode, format)
 
-    return {"prompt": improved, "mode": mode}
+    return {"prompt": improved, "mode": mode, "format": format}
 
 
 @app.get("/api/health")

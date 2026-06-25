@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 
-from .prompts import DEFAULT_MODE
+from .prompts import DEFAULT_FORMAT, DEFAULT_MODE
 
 
 class PromptProvider(ABC):
@@ -9,13 +9,15 @@ class PromptProvider(ABC):
     improving a prompt the user already has."""
 
     @abstractmethod
-    def generate_from_image(self, image_bytes: bytes, mime_type: str, mode: str = DEFAULT_MODE) -> str:
+    def generate_from_image(
+        self, image_bytes: bytes, mime_type: str, mode: str = DEFAULT_MODE, output_format: str = DEFAULT_FORMAT
+    ) -> str:
         ...
 
     @abstractmethod
-    def generate_from_idea(self, idea: str, mode: str = DEFAULT_MODE) -> str:
+    def generate_from_idea(self, idea: str, mode: str = DEFAULT_MODE, output_format: str = DEFAULT_FORMAT) -> str:
         ...
 
     @abstractmethod
-    def improve_prompt(self, prompt: str, mode: str = DEFAULT_MODE) -> str:
+    def improve_prompt(self, prompt: str, mode: str = DEFAULT_MODE, output_format: str = DEFAULT_FORMAT) -> str:
         ...

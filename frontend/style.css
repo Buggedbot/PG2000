@@ -41,6 +41,48 @@ header h1 {
   border-radius: 8px;
 }
 
+.format-select {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.format-select select {
+  flex: 1;
+  padding: 8px 10px;
+  background: #1a1d24;
+  color: #e9e9ef;
+  border: 1px solid #2c2f38;
+  border-radius: 8px;
+}
+
+.tips {
+  margin-bottom: 16px;
+  border: 1px solid #2c2f38;
+  border-radius: 8px;
+  padding: 10px 14px;
+  background: #1a1d24;
+}
+
+.tips summary {
+  cursor: pointer;
+  color: #9a9aa6;
+  font-size: 13px;
+}
+
+.tips ul {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #c9c9d2;
+}
+
+.tips li {
+  margin-bottom: 6px;
+}
+
 .upload-area {
   border: 2px dashed #2c2f38;
   border-radius: 12px;

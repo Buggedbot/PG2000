@@ -66,12 +66,32 @@ IDEA_INPUT_MODES = {"video_generation"}
 
 DEFAULT_MODE = "image_generation"
 
+OUTPUT_FORMATS = {"text", "json"}
+DEFAULT_FORMAT = "text"
 
-def improve_prompt_system_prompt(mode: str) -> str:
-    return (
+JSON_FORMAT_INSTRUCTION = """Output the prompt as a single valid JSON object instead of plain text. \
+Break the description into clear fields appropriate to the mode (for example: subject, setting, \
+composition, lighting, palette, style, mood, camera, details, quality). Omit fields that don't \
+apply. Return ONLY the JSON object — no markdown code fences, no commentary, no trailing text.
+"""
+
+
+def _with_format(system_prompt: str, output_format: str) -> str:
+    if output_format == "json":
+        return f"{system_prompt}\n\n{JSON_FORMAT_INSTRUCTION}"
+    return system_prompt
+
+
+def system_prompt_for(mode: str, output_format: str = DEFAULT_FORMAT) -> str:
+    return _with_format(MODE_PROMPTS[mode], output_format)
+
+
+def improve_prompt_system_prompt(mode: str, output_format: str = DEFAULT_FORMAT) -> str:
+    base = (
         f"You are a prompt engineering specialist for {MODE_LABELS[mode]}. "
         "The user will give you an existing prompt they already use. Rewrite it to be more "
         "detailed, specific, and effective, while preserving their original subject and intent. "
         "Output ONLY the improved prompt. Do not include explanations, headers, quotes, or "
         "markdown formatting."
     )
+    return _with_format(base, output_format)
