@@ -1,12 +1,12 @@
 from functools import lru_cache
 
 from ..config import settings
-from .base import ImagePromptProvider
+from .base import PromptProvider
 from .mock_provider import MockProvider
 
 
 @lru_cache
-def get_provider() -> ImagePromptProvider:
+def get_provider() -> PromptProvider:
     provider = settings.llm_provider
 
     if provider == "mock":

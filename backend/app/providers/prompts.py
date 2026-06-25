@@ -29,9 +29,49 @@ Output ONLY the prompt itself as plain instructive text. Do not include explanat
 quotes, or markdown formatting.
 """
 
+VIDEO_GENERATION_SYSTEM_PROMPT = """You are a prompt engineering specialist for AI video generation \
+tools (Sora, Runway, Pika, Kling, etc.).
+
+The user will give you a short idea or concept, not an image. Expand it into ONE detailed, vivid \
+prompt describing a short video, written as a scene-by-scene story if the idea needs more than one \
+beat. Cover, where relevant:
+- subject(s), setting, and how the action unfolds over time
+- camera framing and movement (e.g. slow pan, tracking shot, close-up, drone shot)
+- pacing and the approximate duration or order of beats/scenes
+- lighting, color palette, and atmosphere
+- visual style (e.g. cinematic, photorealistic, anime, stop-motion)
+- transitions between scenes or shots, if there is more than one
+
+Output ONLY the prompt itself as a single detailed block of text. Do not include explanations, \
+headers, quotes, or markdown formatting.
+"""
+
 MODE_PROMPTS = {
     "image_generation": IMAGE_GENERATION_SYSTEM_PROMPT,
     "text_generation": TEXT_GENERATION_SYSTEM_PROMPT,
+    "video_generation": VIDEO_GENERATION_SYSTEM_PROMPT,
 }
 
+MODE_LABELS = {
+    "image_generation": "AI image generation tools (e.g. Midjourney, Stable Diffusion, DALL-E)",
+    "text_generation": "text-generating AI assistants (e.g. ChatGPT, Claude)",
+    "video_generation": "AI video generation tools (e.g. Sora, Runway, Pika)",
+}
+
+# Modes where the user supplies an image to reverse-engineer into a prompt.
+IMAGE_INPUT_MODES = {"image_generation", "text_generation"}
+
+# Modes where the user supplies a short text idea to expand into a prompt.
+IDEA_INPUT_MODES = {"video_generation"}
+
 DEFAULT_MODE = "image_generation"
+
+
+def improve_prompt_system_prompt(mode: str) -> str:
+    return (
+        f"You are a prompt engineering specialist for {MODE_LABELS[mode]}. "
+        "The user will give you an existing prompt they already use. Rewrite it to be more "
+        "detailed, specific, and effective, while preserving their original subject and intent. "
+        "Output ONLY the improved prompt. Do not include explanations, headers, quotes, or "
+        "markdown formatting."
+    )

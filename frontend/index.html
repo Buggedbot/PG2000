@@ -10,7 +10,7 @@
   <main class="container">
     <header>
       <h1>PG2000</h1>
-      <p class="subtitle">Turn an image into a detailed prompt for AI image generators.</p>
+      <p class="subtitle">Reverse-engineer images into prompts, expand video ideas into stories, and improve any prompt you already have.</p>
     </header>
 
     <section class="mode-select">
@@ -18,17 +18,22 @@
       <select id="mode">
         <option value="image_generation">Image generation prompt</option>
         <option value="text_generation">Text generation prompt</option>
-        <option value="video_generation" disabled>Video generation prompt (coming soon)</option>
+        <option value="video_generation">Video generation prompt</option>
       </select>
     </section>
 
     <section class="upload-area" id="dropZone">
       <input type="file" id="fileInput" accept="image/*" hidden />
       <div id="dropPrompt">
-        <p>Drag &amp; drop an image here, or</p>
+        <p>Drag &amp; drop an image here, paste one (Ctrl/Cmd+V), or</p>
         <button id="browseBtn" type="button">Choose Image</button>
       </div>
       <img id="preview" alt="Selected preview" hidden />
+    </section>
+
+    <section class="idea-area" id="ideaArea" hidden>
+      <label for="ideaInput">Describe your video idea</label>
+      <textarea id="ideaInput" placeholder="e.g. a lone astronaut discovers a glowing forest on an alien moon"></textarea>
     </section>
 
     <button id="generateBtn" type="button" disabled>Generate Prompt</button>
@@ -36,9 +41,12 @@
     <section class="result" id="resultSection" hidden>
       <div class="result-header">
         <h2>Generated Prompt</h2>
-        <button id="copyBtn" type="button">Copy</button>
+        <div class="result-actions">
+          <button id="improveBtn" type="button">Improve</button>
+          <button id="copyBtn" type="button">Copy</button>
+        </div>
       </div>
-      <textarea id="resultText" readonly></textarea>
+      <textarea id="resultText" placeholder="Edit the prompt here, then hit Improve to refine it further."></textarea>
     </section>
 
     <p class="status" id="status" role="status"></p>

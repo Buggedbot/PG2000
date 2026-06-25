@@ -54,9 +54,34 @@ header h1 {
   border-color: #6e7bff;
 }
 
+.idea-area {
+  margin-bottom: 16px;
+}
+
+.idea-area label {
+  display: block;
+  margin-bottom: 6px;
+  color: #9a9aa6;
+  font-size: 13px;
+}
+
+.idea-area textarea {
+  width: 100%;
+  min-height: 90px;
+  padding: 12px;
+  background: #1a1d24;
+  color: #e9e9ef;
+  border: 1px solid #2c2f38;
+  border-radius: 8px;
+  resize: vertical;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
 #browseBtn,
 #generateBtn,
-#copyBtn {
+#copyBtn,
+#improveBtn {
   background: #6e7bff;
   color: #fff;
   border: none;
@@ -68,8 +93,14 @@ header h1 {
 
 #browseBtn:hover,
 #generateBtn:hover:not(:disabled),
-#copyBtn:hover {
+#copyBtn:hover,
+#improveBtn:hover {
   background: #5763e0;
+}
+
+.result-actions {
+  display: flex;
+  gap: 8px;
 }
 
 #generateBtn {
